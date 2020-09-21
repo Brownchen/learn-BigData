@@ -173,3 +173,8 @@ ApplicationMaster主要负责**应用程序**的管理，它为应用向Resource
 3）ApplicationMaster根据应用程序需要向ResourceManager请求更多的Container资源
 
 4）ApplicationMaster通过获得的Container资源进行分布式计算
+
+
+
+#### 3、YARN工作原理详述
+

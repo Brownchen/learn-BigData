@@ -122,7 +122,7 @@ HDFS的文件系统命名空间的层次结构与大多数文件系统类似（�
 
 
 
-#### HDFS文件读取详述
+#### 5、HDFS文件读取详述
 
 ![image-20200923165417862](D:%5CJob%5Clearn-BigData%5CHadoop%5CHadoop.assets%5Cimage-20200923165417862.png)
 
@@ -178,7 +178,17 @@ HDFS的文件系统命名空间的层次结构与大多数文件系统类似（�
 
 ### 分布式计算框架——MapReduce
 
-MapReduce是一种用于数据处理的编程模型，本质上是并行运行的。可以将大规模数据分析任务分发给拥有多机器的数据中心。
+#### 1、MapReduce设计思想
+
+MapReduce是一种用于数据处理的编程模型，本质上是并行运行的。可以将大规模数据分析任务分发给拥有多机器的数据中心。MapReduce任务主要包括两个部分：Map任务和Reduce任务。这两个任务高度抽象了大数据任务的并行计算过程。
+
+
+
+>MR的设计思想是，从HDFS获得输入数据，将输入的一个大的数据集分割成多个小数据集，然后并行计算这些小数据集（Map），最后将每个小数据集的结果进行汇总（Reduce），得到最终的结果并将其输出到HDFS中。
+
+<img src="D:%5CJob%5Clearn-BigData%5CHadoop%5CHadoop.assets%5C1565182220824.png" alt="1565182220824" style="zoom:150%;" />
+
+
 
 MapReduce作业通过将输入的数据集拆分为独立的块，这些块由map以并行的方式处理，框架对map的输出进行排序，然后输入到reduce中。MR框架专门用于<key,value>键值对处理。
 
@@ -187,6 +197,30 @@ MapReduce作业通过将输入的数据集拆分为独立的块，这些块由ma
 MapReduce作业(job)是客户端需要执行的一个工作单元，包括：输入数据、MapReduce程序和配置信息。
 
 Hadoop将MapReduce的输入数据划分为等长的小数据块，称为输入分片（分片），然后为每个分片构建一个map任务。Hadoop在存储有输入数据（HDFS中的数据）的节点上运行map任务，可以无需使用集群带宽资源，这就是所谓的“数据本地化优化”。然后将排序过的map输出数据发送到运行reduce任务的节点上进行合并，然后执行reduce函数。
+
+
+
+#### 2、MapReduce的工作原理
+
+
+
+#### 3、MapReduce在Yarn中的工作流程
+
+![img](D:%5CJob%5Clearn-BigData%5CHadoop%5CHadoop.assets%5C20180430221233503)
+
+1. **客户端提交MR应用到Yarn的RM。**RM主要对资源进行管理和分配，并监控ApplicationMaster的运行情况，不负责具体task的计算。如果AM运行失败，会重新分配资源（container），重启AM。
+2. **RM选取一个NM，并在NM中分配一个container。**这个NM在container中新建一个AM，并于RM通信。
+3. **AM创建后，立即在RM中完成注册，使得RM可以监控AM的运行情况。**AM开始运行MR应用，并为各个task向RM申请其他的NM。
+4. **AM收到RM分配的NM，并与他们完成通信。**
+5. **AM请求新分配的NM使用他们的container完成各个task的计算任务。**AM在task计算过程中，始终监控他们的运行情况，并与RM通信。
+
+当应用程序完成时，AM会像RM申请注销自己。
+
+
+
+#### 4、MapReduce编程流程
+
+
 
 
 
